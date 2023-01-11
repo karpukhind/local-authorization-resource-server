@@ -1,0 +1,17 @@
+
+
+https://www.javatips.net/api/keycloak-master/adapters/oidc/spring-security/src/main/java/org/keycloak/adapters/springsecurity/config/KeycloakWebSecurityConfigurerAdapter.java
+https://javadoc.io/doc/org.keycloak/keycloak-spring-security-adapter/6.0.0/org/keycloak/adapters/springsecurity/AdapterDeploymentContextFactoryBean.html   
+-  load keycloak configuration for KeycloakAuthenticationEntryPoint initialization
+https://javadoc.io/static/org.keycloak/keycloak-spring-security-adapter/2.5.0.Final/org/keycloak/adapters/springsecurity/authentication/KeycloakAuthenticationEntryPoint.html
+
+
+https://www.baeldung.com/spring-boot-keycloak  -  customization of KeycloakWebSecurityConfigurerAdapter.configure(HttpSecurity http)  with super invocation
+https://www.baeldung.com/keycloak-embedded-in-spring-boot-app
+
+https://www.baeldung.com/spring-security-basic-authentication  - AuthenticationEntryPoint configuration example
+
+https://www.baeldung.com/spring-security-multiple-entry-points  - examples of several realms configuration
+
+https://stackoverflow.com/questions/12701085/what-is-the-realm-in-basic-authentication  - realm description
+

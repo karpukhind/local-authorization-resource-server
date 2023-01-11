@@ -1,0 +1,1 @@
+cmd /k keytool -genkeypair -alias bael-oauth-jwt -keyalg RSA -keypass qwerty -keystore target\local-authorization-resource-server\WEB-INF\classes\authentication-server-rsa.jks -storepass qwerty

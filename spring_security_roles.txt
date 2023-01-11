@@ -1,0 +1,74 @@
+
+Spring boot and security. hasRole() and denyAll() method don't restrict access to resources.
+
+
+I'm developing Spring boot and security web application with authorization and resource servers enabled. I have defined a set of users with roles assigned to them and trying to implement roles based access to rest endpoints. I was able to implement tokeb based access to endpoints, but can't restrict access to end users, that would be based on their roles. 
+
+I have done two endpoints: /rest/products/list  and  /rest/products/add  and trying to restrict access to /rest/products/add  endpoint with the user that is of  ADMIN role.
+
+My  WebSecurityConfigurerAdapter is as follows:
+
+
+Authorization and resource servers are enabled on the level of the class with main Spring boot launch method:
+
+
+Therefore, accourding to the official documentation resource /rest/products/add should be accessible to   admin / adminPass  user only  as far as that user has ADMIN role. But if to try to it with user1 / user1Pass  ,  it is still accessible:
+
+
+
+Also I added ( in the testing purpose ) in the configuration method the following rule .antMatchers("/products/list").denyAll(); Here https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/config/annotation/web/configurers/ExpressionUrlAuthorizationConfigurer.AuthorizedUrl.html#denyAll()   is indicated that /products/list   shouldn't be accessible  to any user.  But it still keeps on responding ( provided access correct token ).
+
+Could someone kindly indicate what an additional configuration should be done to make .hasRole("ADMIN")  and  .denyAll()  work as expected ?
+
+In the similar question here https://stackoverflow.com/questions/43052745/how-to-fix-role-in-spring-security   the order of matchers should be from the more specific to the less. But in my case there are two matchers and no matchers that can overlap them.
+
+
+
+=============================================================================================================
+
+
+ANSWER:
+
+dur, aditya lath, thanks for your comments.
+
+Finally was able to fint the solution with the following:
+
+[Here](https://stackoverflow.com/questions/53451123/why-spring-security-permitall-is-not-working-with-oauth2-0) is an example of `ResourceServerConfigurerAdapter` class is listed. From this and from your comment, dur, I realized that I confused `ResourceServerConfigurerAdapter` and `WebSecurityConfigurerAdapter`, trying to define access restriction matchers in `WebSecurityConfigurerAdapter`. I changed resource server configuration in the following way:
+
+Method that was in `WebSecurityConfigurerAdapter`
+```
+ @Override
+    public void configure(final HttpSecurity http) throws Exception {
+
+        http.authorizeRequests()
+                .antMatchers("/rest/products/add").hasAnyRole("ADMIN")
+                .antMatchers("/rest/products/list").denyAll();
+    }
+```	
+
+was moved to 
+
+```
+@Configuration
+public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
+
+    @Override
+    public void configure(final HttpSecurity http) throws Exception {
+
+        http.authorizeRequests()
+                .antMatchers("/rest/products/add").hasAnyRole("ADMIN")
+                .antMatchers("/rest/products/list").denyAll();
+    }
+
+}
+```
+Now restrictions defined by matchers above are working as expected. 
+
+
+
+
+
+
+
+
+

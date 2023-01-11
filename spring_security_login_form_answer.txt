@@ -1,0 +1,10 @@
+
+The problem was in the fact that i was using depricated @EnableResourceServer annotation that adds OAuth2AuthenticationProcessingFilter. For the form login authorization flow this is incorrect and that filter was removing authentication object from the SecurityContext. Here (https://stackoverflow.com/questions/41480102/how-spring-security-filter-chain-works) is indicated that OAuth2AuthenticationProcessingFilter shouldn't present in the filter chain for the form login authorization flow. 
+
+The reason why i was needed @EnableResourceServer annotation is that there are there is the bearer authentication flow in my application alongside with form login.
+
+I replaced @EnableResourceServer annotation and ResourceServerConfigurerAdapter for the bearer authentication flow with Spring Security 5 resource server as http.oauth2ResourceServer() that is in WebSecurityConfigurerAdapter  ( https://stackoverflow.com/questions/54988935/spring-security-enableresourceserver-vs-oauth2resourceserver ). Finally the solution is with the following two WebSecurityConfigurerAdapter-s:
+
+
+
+

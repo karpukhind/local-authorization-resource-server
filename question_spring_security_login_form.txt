@@ -1,0 +1,31 @@
+
+
+SecurityContextHolder.getContext().getAuthentication() returns null
+
+I'm developing Spring boot and security web application with authorization and resource servers enabled. I have defined a set of users with roles assigned to them and have implemented roles based access to rest endpoints. Besides that my application has straightforward UI with web pages. Those pages display the same data that is on rest. I'm trying to implement the same roles based access to pages with  ResourceServerConfig#configure  and my current code:
+
+
+public void configure(final HttpSecurity http) throws Exception {
+
+        http.authorizeRequests()
+                .antMatchers("/rest/products/add").hasAnyRole("ADMIN")
+                .anyRequest().authenticated()
+
+                .and().formLogin()
+                .loginPage("/login.jsf").permitAll()
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/login-successful", true)
+                .and().logout().permitAll();
+    }
+	
+This configuration works perfectly for REST controllers access, but authorization with the login form leads to the redirect to the  /login-successful  and  the message   
+Full authentication is required to access this resourceunauthorized   is displayed.
+
+The reason is that SecurityContextHolder.getContext().getAuthentication() for /login-successful  request inspite it was correctly initialized in AbstractAuthenticationProcessingFilter#successfulAuthentication  at the point of login form post. The same issue with other web pages in my app as well. 
+
+What should be added to the above configuration so that make it work for the REST and form login bought ?
+
+Here https://www.baeldung.com/spring-security-login is indicted that  HttpSecurity configuration provided above is enough for authorization with form login to work correctly.
+
+A similar case is described here  https://stackoverflow.com/questions/36411947/spring-security-getauthentication-returns-null  but the reason over there is that an url was explicitly ignored in WebSecurity configurer.
+

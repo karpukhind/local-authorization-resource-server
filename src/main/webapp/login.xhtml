@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+      <h:form id="loginForm" >
+         <p:panel header="Login :">
+            <h:panelGrid columns="1">
+               <p:outputLabel value="User name: " />
+               <input type="text" id="username" name="username" />
+               <p:outputLabel value="Password: " />
+               <input type="password" id="password" name="password"  />
+               <h:commandButton value="Login" />
+            </h:panelGrid>
+         </p:panel>
+
+         <input type="hidden" name="_csrf" value="${requestScope._csrf.token}" />
+
+      </h:form>
+
+</html>
+
+<!--
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+   <title>Spring Security Example </title>
+</head>
+<body>
+<div th:if="${param.error}">
+   Invalid username and password.
+</div>
+<div th:if="${param.logout}">
+   You have been logged out.
+</div>
+<form th:action="@{/login}" method="post">
+   <div><label> User Name : <input type="text" name="username"/> </label></div>
+   <div><label> Password: <input type="password" name="password"/> </label></div>
+   <div><input type="submit" value="Sign In"/></div>
+</form>
+</body>
+</html>-->

@@ -1,0 +1,1 @@
+cmd /k curl –XPUT -k --request  POST "https://localhost:8443/oauth/token"  --header "Content-Type: application/x-www-form-urlencoded" --data-raw "client_id=first-client&client_secret=noonewilleverguess&grant_type=password&user=user1&password=user1Pass&scope=any"

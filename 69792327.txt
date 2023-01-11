@@ -1,0 +1,35 @@
+
+As a POST method call to /workout returns 403 Forbidden, than a request doesn't reach the controller method, as far as this status is returned by ExceptionTranslationFilter that is invoked after FilterSecurityInterceptor if AccessDecisionManager throws AccessDeniedException. It is possible to check whether method WorkoutController.add(Workout workout) is being called or not with the debagger.    
+
+Regarding problem with findAll()  -  accourding to this (https://www.baeldung.com/spring-data-security)  syntaxis like  ?#{authentication.name}  is permitted as far as framework is able to infer authentication object (and prinical) from SecurityContext. 
+
+One possible http security configuration includes  HttpSecurity.requestMatcher (https://stackoverflow.com/questions/59058596/multiple-websecurityconfigureradapter-in-spring-boot-for-multiple-patterns) :
+
+For 
+  protected void configure(HttpSecurity http) throws Exception {
+
+        http.requestMatcher(new AntPathRequestMatcher("/rest/**"))
+                .authorizeRequests()
+                .anyRequest().authenticated()
+                .and()
+                .oauth2ResourceServer().jwt();
+    }
+	
+This configuration works for me with the following controller:
+
+@RestController
+@RequestMapping(value = "/rest")
+public class ProductControllerRest {
+
+	@Autowired
+	private ProductRepository productRepository;
+
+	@PostMapping("/")
+	public String saveProduct(@RequestBody Product product) {
+		//		Product productPersisted = productRepository.save(new Product(product.getName(), product.getPrice()));
+		Product productPersisted = productRepository.save(product);
+		return productPersisted.getId().toString();
+	}
+	
+
+Besides that here (https://www.baeldung.com/spring-enablewebsecurity-vs-enableglobalmethodsecurity) another option of @EnableGlobalMethodSecurity use is shown. It worth to add it to a rest controller 

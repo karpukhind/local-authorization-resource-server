@@ -1,0 +1,1 @@
+cmd /k keytool -list -v -keystore src\main\resources\authentication-server-rsa.jks

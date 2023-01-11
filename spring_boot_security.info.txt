@@ -1,0 +1,236 @@
+
+Annotations:
+@EnableGlobalMethodSecurity 
+
+
+AUTHORIZATION AND RESOURCE SERVERS DESCRIPTION:
+https://www.baeldung.com/spring-security-oauth-resource-server
+https://medium.com/swlh/stateless-jwt-authentication-with-spring-boot-a-better-approach-1f5dbae6c30f
+
+
+
+AUTHENTICATION TYPES:
+https://stackoverflow.com/questions/34013299/web-api-authentication-basic-vs-bearer
+
+
+BEARER TOKEN TYPES:
+https://medium.com/@piyumimdasanayaka/json-web-token-jwt-vs-opaque-token-984791a3e715
+https://docs.mashery.com/connectorsguide/GUID-3812EE8B-3770-445C-83F2-FB6D1D54C18A.html
+
+
+
+ASYMETRIC DATA ENCRYPTION:
+https://superuser.com/questions/620121/what-is-the-difference-between-a-certificate-and-a-key-with-respect-to-ssl
+http://java-online.ru/keystore-keytool.xhtml  
+https://docs.oracle.com/en/java/javase/12/tools/keytool.html
+
+
+
+@ENABLERESOURCESERVER @ENABLEAUTHORIZATIONSERVER ARE DEPRECATED
+https://stackoverflow.com/questions/59405465/enableresourceserver-enableauthorizationserver-are-deprecated
+spring security: @EnableResourceServer (in Spring OAuth2) -> oauth2ResourceServer() (in Spring Security 5)
+https://stackoverflow.com/questions/54988935/spring-security-enableresourceserver-vs-oauth2resourceserver   -   http.oauth2ResourceServer() is in the current Spring Security 5 reference and is the way to go.
+
+OAuth2.0 resource server is now part of spring-security core. Unfortunately they do not have a replacement for EnableAuthorizationServer. I am following this GUIDE:
+https://github.com/spring-projects/spring-security/wiki/OAuth-2.0-Migration-Guide
+http://ostack.cn/?qa=116046/   -  very  detailed description of enableauthorizationserver deprication
+
+Spring Security 5.2 enhancements to the DSL:
+https://spring.io/blog/2019/11/21/spring-security-lambda-dsl
+
+
+OAuth 2.1 Authorization Server instead of @enableresourceserver
+https://github.com/spring-projects/spring-authorization-server
+
+
+
+
+
+
+
+SPRING SECURITY OAUTH2 AUTHENTICATION SERVER CONFIGURATION:
+
+
+
+In the request of /oauth/token, we specify client_id and client_secret, so we will go to ClientCredentialsTokenEndpointFilter.
+on submitting form to /j_spring_security_check  UsernamePasswordAuthenticationFilter will match the username and password as configured in authentication-provider settings in application-security.xml.
+
+https://stackoverflow.com/questions/53568766/spring-boot-oauth2-empty-scope-either-the-client-or-the-user-is-not-allowed-t
+
+
+POST URL for Login and AuthenticationManagerBuilder example:
+https://www.baeldung.com/spring-security-login   - The default URL where the Spring Login will POST to trigger the authentication process is /login, which used to be /j_spring_security_check 
+More AuthenticationManagerBuilder example:
+https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/config/annotation/web/builders/HttpSecurity.html
+
+
+
+
+
+User.withDefaultPasswordEncoder() that is used in  org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter#userDetailsService  is depricated and org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder#inMemoryAuthentication  should be used. 
+
+The reason is  :  https://stackoverflow.com/questions/49847791/java-spring-security-user-withdefaultpasswordencoder-is-deprecated/49847852
+
+
+AuthorizationServerConfigurerAdapter with jdbc datasource and database tables set:
+https://github.com/spring-projects/spring-security-oauth/issues/1035
+
+
+List of spring security filters:
+https://stackoverflow.com/questions/41480102/how-spring-security-filter-chain-works
+
+
+SecurityContextHolder.getContext().getAuthentication() examples:
+https://stackoverflow.com/questions/22191386/securitycontextholder-getcontext-getauthentication-returning-null
+https://stackoverflow.com/questions/36411947/spring-security-getauthentication-returns-null
+https://stackoverflow.com/questions/53496272/securitycontextholder-getcontext-getauthentication-getcredentials-returns  -  non spring boot 
+Authentication auth = new UsernamePasswordAuthenticationToken(user, password, authorities);
+
+
+
+SPRING SECURITY OAUTH2 RESOURCE SERVER CONFIGURATION:
+
+Main annotation:
+@EnableResourceServer  - Adding this annotation adds the OAuth2AuthenticationProcessingFilter 
+https://docs.spring.io/spring-security-oauth2-boot/docs/2.2.x-SNAPSHOT/reference/html/boot-features-security-oauth2-resource-server.html  - 2.2.1 Enabling the Resource Server 
+https://github.com/spring-projects/spring-security-oauth/issues/388
+
+
+HttpSecurity configuration example:
+https://stackoverflow.com/questions/59604190/spring-security-users-arent-getting-roles
+
+
+
+Global config (configureGlobal) for password encoder and userDetailsService: 
+https://stackoverflow.com/questions/48767183/spring-boot-initializes-more-daoauthenticationproviders-than-expected
+
+
+Inmemory user details service:
+https://spring.io/guides/gs/securing-web/
+
+
+Custom Username Password Authentication Filter with Spring Security:
+https://leaks.wanari.com/2017/11/28/how-to-make-custom-usernamepasswordauthenticationfilter-with-spring-security
+
+ResourceServerConfigurerAdapter is depricated:
+https://stackoverflow.com/questions/62590183/upgraded-spring-security-oauth-to-2-4-1-resourceserverconfigureradapter-is-now
+
+
+
+Changing order of ResourceServerConfigurerAdapter and WebSecurityConfigurerAdapter:
+https://docs.spring.io/spring-security-oauth2-boot/docs/current/reference/html5/#boot-features-security-oauth2-single-sign-on  section:  2.7. Less Common Features
+
+
+Multiple WebSecurityConfigurerAdapter for multiple HttpSecurity entries :
+https://stackoverflow.com/questions/18815015/creating-multiple-http-sections-in-spring-security-java-config  -  See here for a sample.
+https://stackoverflow.com/questions/33739359/combining-basic-authentication-and-form-login-for-the-same-rest-api
+https://github.com/spring-projects/spring-security-oauth/issues/224
+https://stackoverflow.com/questions/59058596/multiple-websecurityconfigureradapter-in-spring-boot-for-multiple-patterns   -  several non nested static adapters with AntPathRequestMatcher restriction ( the one that works , Anar Sultanov)
+
+Single WebSecurityConfigurerAdapter with multiple static nested WebSecurityConfigurerAdapters for multiple HttpSecurity entries ( doesn't work ):
+https://docs.spring.io/spring-security/site/docs/current/reference/html5/#multiple-httpsecurity
+https://coderoad.ru/27774742/Spring-Security-HTTP-Basic-for-RESTFul-%D0%B8-FormLogin-Cookies-%D0%B4%D0%BB%D1%8F-%D0%B2%D0%B5%D0%B1-%D0%B0%D0%BD%D0%BD%D0%BE%D1%82%D0%B0%D1%86%D0%B8%D0%B9
+https://www.baeldung.com/spring-security-multiple-entry-points
+
+Customizatom JwtGrantedAuthoritiesConverter in order ro customize claims processing in JWT:
+https://stackoverflow.com/questions/72226464/how-configure-the-jwtauthenticationconverter-for-a-specific-claim-structure
+In the case when Spring security 4 authorization server is used ( it is an outdated one from @ENABLEAUTHORIZATIONSERVER annotation ), and therefore claims are being searched in a wrong manner: JWT field scope is taken instead of field authorities. This leads to failure to check role of a token bearer (role, that is encoded in an that JWT bearer access token ) and to compare it with path objects list from local.authorization.resource.server.security.SecurityConfigRest#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity). This missconfiguration affects the following places in Spring boot filter chain:
+org.springframework.security.web.access.intercept.FilterSecurityInterceptor#invoke
+org.springframework.security.access.intercept.AbstractSecurityInterceptor#beforeInvocation
+org.springframework.security.web.access.expression.WebExpressionVoter#vote
+....
+org.springframework.security.access.expression.SecurityExpressionRoot#hasRole
+
+JWT decoding:
+org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationFilter#doFilterInternal
+
+
+
+
+@EnableWebSecurity:
+https://stackoverflow.com/questions/44671457/what-is-the-use-of-enablewebsecurity-in-spring
+https://www.baeldung.com/spring-enablewebsecurity-vs-enableglobalmethodsecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true) and @PreAuthorize :
+https://developer.okta.com/blog/2019/06/20/spring-preauthorize  |||  Enable Method-level Security for Spring @PreAuthorize
+https://habr.com/ru/post/307558/   -  about @PreAuthorize
+https://www.baeldung.com/spring-security-method-security  -  about @PreAuthorize  with authentication and prinical
+
+
+https://www.marcobehler.com/guides/spring-security  section  How to use Spring Security’s configure DSL
+
+
+
+JWT :
+
+https://stackoverflow.com/questions/39909419/what-are-the-main-differences-between-jwt-and-oauth-authentication#:~:text=Basically%2C%20JWT%20is%20a%20token,you%20must%20go%20with%20OAuth2.  -  difference between JWT and OAuth authentication
+https://security.stackexchange.com/questions/98282/difference-between-openssl-and-keytool   -  Difference between OpenSSL and keytool
+https://stackoverflow.com/questions/11536848/keystore-type-which-one-to-use/11540061        -  Keystore types
+
+https://jwt.io/introduction:
+-  Claims are statements about an entity (typically, the user) and additional data. 
+
+
+JwtDecoder example:
+https://stackoverflow.com/questions/59522787/spring-security-5-openid-resource-server-websecurity-dsl
+
+Resource server configuration for Spring Security core 5 (with  HttpSecurity.oauth2ResourceServer): 
+https://www.baeldung.com/spring-security-oauth2-jws-jwk
+https://www.baeldung.com/spring-security-oauth-resource-server
+https://auth0.com/blog/spring-boot-authorization-tutorial-secure-an-api-java/
+https://medium.com/swlh/stateless-jwt-authentication-with-spring-boot-a-better-approach-1f5dbae6c30f   -  custom nimbus jwt decoder example that retrieves public key directly from keystore 
+( not from key-set-uri of authorization server )  and an example of authorization server implementation ( apart from the case in https://www.baeldung.com/spring-security-oauth2-jws-jwk   where the deprecated one from Spring Security 4 is used ) 
+https://www.baeldung.com/spring-security-authenticationmanagerresolver
+
+Resource server configuration with properties. Difference between security.oauth2.resource.jwt.key-uri (or security.oauth2.resource.jwt.key-value) and security.oauth2.resource.jwk.key-set-uri :
+https://docs.spring.io/spring-security-oauth2-boot/docs/2.1.0.M2/reference/html/boot-features-security-oauth2-resource-server.html
+Description of spring.security.oauth2.resourceserver.jwt.issuer-uri   property  for the resource server and NimbusJwtDecoder
+https://fusionauth.io/community/forum/topic/705/spring-boot-oauth2-resource-server-jwt-encoder/2
+ClientRegistrations.fromIssuerLocation description:
+https://docs.spring.io/spring-security/site/docs/5.2.12.RELEASE/reference/html/oauth2.html#oauth2Client-client-registration
+Parse string representation of public RSA and create java.security.interfaces.RSAPublicKey for subsequent JwtDecoder creation:
+https://gist.github.com/destan/b708d11bd4f403506d6d5bb5fe6a82c5
+
+WITHOUT-SPRING-BOOT if no spring boot needed ( just in case ):
+https://stackoverflow.com/questions/59907402/spring-security-jwt-example-without-spring-boot
+
+
+AUTHENTICATION:
+
+AbstractConfiguredSecurityBuilder (HttpSecurity) ( https://docs.spring.io/spring-security/site/docs/4.0.x/apidocs/org/springframework/security/config/annotation/AbstractConfiguredSecurityBuilder.html )
+
+org.springframework.security.config.annotation.AbstractConfiguredSecurityBuilder#doBuild
+org.springframework.security.config.annotation.AbstractConfiguredSecurityBuilder#init
+
+
+
+org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter#attemptAuthentication
+org.springframework.security.authentication.ProviderManager#authenticate
+
+
+MODULARIZATION:
+https://developer.okta.com/blog/2020/07/27/spring-boot-using-java-modules
+Modules in spring security 5:
+https://habr.com/ru/post/423553/
+Jigsaw description:
+https://github.com/spring-projects/spring-framework/issues/18079
+https://habr.com/ru/post/423553/  -  Поддержка Java 9 (Automatic-Module-Name in 5.0, module-info in 6.0+, ASM 6)
+
+
+
+
+SPRING SECURITY JAVADOC:
+
+AuthorizationServerConfigurerAdapter :
+https://docs.spring.io/spring-security/oauth/apidocs/org/springframework/security/oauth2/config/annotation/web/configuration/AuthorizationServerConfigurerAdapter.html
+Spring boot configuration for 
+AuthenticationManager  -  for password authorization flow 
+AuthorizationServerSecurityConfigurer  -  configuration class to customize ClientCredentialsTokenEndpointFilter to fix  401 authentication is required when Spring Security OAuth2.0 applies for token access/oauth/token ( https://www.programmersought.com/article/49825807868/ )
+ClientDetailsServiceConfigurer  - client configuration with grant types
+
+
+
+WebSecurityConfigurerAdapter :
+https://docs.spring.io/spring-security/site/docs/current/api/org/springframework/security/config/annotation/web/configuration/WebSecurityConfigurerAdapter.html#authenticationManagerBean()
+
+
+
