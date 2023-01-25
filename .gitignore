@@ -2,6 +2,9 @@ HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
+src/main/webapp/WEB-INF/classes/
+/src/main/webapp/WEB-INF/classes/
+**/classes/
 !**/src/test/**/target/
 
 ### STS ###
